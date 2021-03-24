@@ -10,6 +10,7 @@ end: get the infos of a book and write them into a csv file
 
 import os
 import urllib.request
+
 import requests
 from bs4 import BeautifulSoup
 
