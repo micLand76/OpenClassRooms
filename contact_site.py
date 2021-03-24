@@ -94,7 +94,7 @@ def recup_book_info(contenu):
 
 	#name of the book without modifications
 	title = soup.find("div",{"class": 'col-sm-6 product_main'}).\
-				find('h1').text.strip()
+				find('h1').text.strip().replace('%','')
 	#name of the book with modification to give a name to the file jpg
 	image_name = title.replace("'","").replace("\\","").replace(",","")\
 			.replace("-","_").replace(".","").replace("!","")\
@@ -109,11 +109,11 @@ def recup_book_info(contenu):
 	#the informations about the book are in a table
 	upc_liste = soup.find("table",{"class": 'table-striped'}).find_all('td')
 
-	product_description = soup.find_all('p')[3].text.replace('...more','')
+	product_description = soup.find_all('p')[3].text.replace('...more','').replace('%','')
 
 	book = []
 	for upc in upc_liste:
-		book.append(upc.text.strip())
+		book.append(upc.text.strip().replace('%',''))
 
 	#to extract the nb of stock available and not the entire sentence
 	nb_available = book[5][book[5].find('(')+1:].replace(' available)','')
@@ -126,13 +126,15 @@ def recup_book_info(contenu):
 	except:
 		print("There's a problem")
 
-	csv_file.write(product_url + ',' + book[0] + ',' + title + ',' + book[3] +\
-					',' + book[2] + ',' + nb_available + ',' +\
-					product_description + ',' + CATEGORY_NAME + ',' + book[6] +\
-					',' + image_url + ',' + CATEGORY_NAME + '\\' + image_name + '\n')
+	#we use % to make the diff between columns because there's
+	#often commas into the product description
+	csv_file.write(product_url + '%' + book[0] + '%' + title + '%' + book[3] +\
+					'%' + book[2] + '%' + nb_available + '%' +\
+					product_description + '%' + CATEGORY_NAME + '%' + book[6] +\
+					'%' + image_url + '%' + CATEGORY_NAME + '\\' + image_name + ".jpg" + '\n')
 
 	#after we had create the csv file, we download each book's image
-	urllib.request.urlretrieve(image_url, CATEGORY_NAME + "/" + image_name +".jpg")
+	urllib.request.urlretrieve(image_url, CATEGORY_NAME + "/" + image_name + ".jpg")
 
 
 SITE_URL = 'http://books.toscrape.com/'
@@ -154,14 +156,17 @@ for cat_url in categorie:
 	#of the categorie when it make another loop to find the name of the
 	#categorie, we need to use the get_text fct and to erase the spaces
 	CATEGORY_NAME = str(cat_url.get_text()).strip()
+	print('SCRAPPING OF THE CATEGORIE ' + CATEGORY_NAME,flush=True)
 	with open('./'+CATEGORY_NAME+'.csv', 'w', encoding='utf-8-sig') as csv_file:
 
 		#we create the title of the columns
-		csv_file.write("product_page_url" + ',' + "universal_ product_code (upc)"\
-						+ ',' + "title" + ','	+ "price_including_tax" + ','\
-						+ "price_excluding_tax" + ',' + "number_available" + ','\
-						+ "product_description" + ',' + "category" + ','\
-						+ "review_rating" + ',' + "image_url" + ','\
+		#we use % to make the diff between columns because there's
+		#often commas into the product description
+		csv_file.write("product_page_url" + '%' + "universal_ product_code (upc)"\
+						+ '%' + "title" + '%'	+ "price_including_tax" + '%'\
+						+ "price_excluding_tax" + '%' + "number_available" + '%'\
+						+ "product_description" + '%' + "category" + '%'\
+						+ "review_rating" + '%' + "image_url" + '%'\
 						+ "image_file_name" + '\n')
 
 		#we recupere all the books' url into product_page_url_list
