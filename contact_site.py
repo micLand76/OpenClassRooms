@@ -36,11 +36,11 @@ def recup_books_url(categorie_url):
 	source_cat = BeautifulSoup(response_cat.content, 'html.parser')
 	prod_list = source_cat.find_all('h3')
 
-	page_prem = SITE_URL + categorie_url.a['href'].replace('index.html','')
+	first_page = SITE_URL + categorie_url.a['href'].replace('index.html','')
 
 
-	while page_suiv_existe(source_cat) is True:
-		response_cat = requests.get(page_prem + \
+	while next_page_exist(source_cat) is True:
+		response_cat = requests.get(first_page + \
 						str(source_cat.find("li",{"class": 'next'}).a['href']))
 		source_cat = BeautifulSoup(response_cat.content, 'html.parser')
 		prod_list += source_cat.find_all('h3')
@@ -48,7 +48,7 @@ def recup_books_url(categorie_url):
 	return prod_list
 
 
-def page_suiv_existe(soup_cat):
+def next_page_exist(soup_cat):
 	"""verify if there's a next page
 
 	to know if there's more than one page of books for the categorie
@@ -92,9 +92,16 @@ def recup_book_info(contenu):
 
 	soup = BeautifulSoup(contenu, 'html.parser')
 
-
-	titre = soup.find("div",{"class": 'col-sm-6 product_main'}).\
+	#name of the book without modifications
+	title = soup.find("div",{"class": 'col-sm-6 product_main'}).\
 				find('h1').text.strip()
+	#name of the book with modification to give a name to the file jpg
+	image_name = title.replace("'","").replace("\\","").replace(",","")\
+			.replace("-","_").replace(".","").replace("!","")\
+			.replace(":","").replace("?","").replace(")","")\
+			.replace("(","").replace("*","").replace("#","")\
+			.replace(" ","_").replace("&","").replace("/","_")\
+			.replace("\"","_")
 
 	image_url_tag = soup.find("div",{"class": 'item active'}).find('img')
 	image_url = image_url_tag['src'].replace('../..','http://books.toscrape.com')
@@ -104,29 +111,28 @@ def recup_book_info(contenu):
 
 	product_description = soup.find_all('p')[3].text.replace('...more','')
 
-	livre = []
+	book = []
 	for upc in upc_liste:
-		livre.append(upc.text.strip())
+		book.append(upc.text.strip())
 
 	#to extract the nb of stock available and not the entire sentence
-	nb_available = livre[5][livre[5].find('(')+1:].replace(' available)','')
+	nb_available = book[5][book[5].find('(')+1:].replace(' available)','')
 	if nb_available.isdigit is False:
 		nb_available = 0
 
 	#we create a new repository for each categorie
-
 	try:
 		os.makedirs(CATEGORY_NAME, exist_ok=True)
 	except:
-		print('il y a un problème')
+		print("There's a problem")
 
-	csv_file.write(product_url + ',' + livre[0] + ',' + titre + ',' + livre[3] +\
-					',' + livre[2] + ',' + nb_available + ',' +\
-					product_description + ',' + CATEGORY_NAME + ',' + livre[6] +\
-					',' + image_url + '\n')
+	csv_file.write(product_url + ',' + book[0] + ',' + title + ',' + book[3] +\
+					',' + book[2] + ',' + nb_available + ',' +\
+					product_description + ',' + CATEGORY_NAME + ',' + book[6] +\
+					',' + image_url + ',' + CATEGORY_NAME + '\\' + image_name + '\n')
 
 	#after we had create the csv file, we download each book's image
-	urllib.request.urlretrieve(image_url, CATEGORY_NAME + "/" + livre[0]+".jpg")
+	urllib.request.urlretrieve(image_url, CATEGORY_NAME + "/" + image_name +".jpg")
 
 
 SITE_URL = 'http://books.toscrape.com/'
@@ -142,11 +148,11 @@ for cat_url in categorie:
 	if cat_url.a['href'] == "catalogue/category/books_1/index.html":
 		continue
 
-	"""we create a file for each categorie
-	we open the csv file with option to don't have any problem of
-	caracters conversion we make this here to not erase the csv file
-	of the categorie when it make another loop to find the name of the
-	categorie, we need to use the get_text fct and to erase the spaces"""
+	#we create a file for each categorie
+	#we open the csv file with option to don't have any problem of
+	#caracters conversion we make this here to not erase the csv file
+	#of the categorie when it make another loop to find the name of the
+	#categorie, we need to use the get_text fct and to erase the spaces
 	CATEGORY_NAME = str(cat_url.get_text()).strip()
 	with open('./'+CATEGORY_NAME+'.csv', 'w', encoding='utf-8-sig') as csv_file:
 
@@ -155,14 +161,15 @@ for cat_url in categorie:
 						+ ',' + "title" + ','	+ "price_including_tax" + ','\
 						+ "price_excluding_tax" + ',' + "number_available" + ','\
 						+ "product_description" + ',' + "category" + ','\
-						+ "review_rating" + ',' + "image_url" + '\n')
+						+ "review_rating" + ',' + "image_url" + ','\
+						+ "image_file_name" + '\n')
 
 		#we recupere all the books' url into product_page_url_list
 		product_page_url_list = recup_books_url(cat_url)
 
 		product_page_url = []
 
-		"""for each categorie, we loop on the books of it"""
+		#for each categorie, we loop on the books of it
 		for product_url in product_page_url_list:
 			product_url = 'http://books.toscrape.com/catalogue' +\
 							product_url.a['href'].replace('../../..','')
