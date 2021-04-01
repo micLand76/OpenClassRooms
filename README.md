@@ -12,9 +12,9 @@ Projects for my OpenClassRooms formation
 download the files contact_site.py and requirements.tx there : https://github.com/micLand76/OpenClassRooms.git
 * From the command line (like Git Bash): <br>
   ```
-  python -m venv env <br>
-  pip install -r requirements.txt<br>
-  source env/scripts/activate<br>
+  python -m venv env
+  pip install -r requirements.txt
+  source env/scripts/activate
   python contact_site.py
   ```
 
