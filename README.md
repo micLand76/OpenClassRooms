@@ -40,5 +40,6 @@ We search the tag to find the name of each categorie, except the first categorie
 We call the recup_book_url fonction, for each categorie, to parse the page(s) of it and recover the url of each book.<br>
 The recup_book_url fonction call the next_page_exist fonction to know if there's many pages for the categorie to parse it.<br>
 For each book's url, we use recup_book_info fonction to recover all the informations we need on a book and write them in the categorie's csv file and to download the book's picture.<br>
+The differents informations on a book are separated by the '%' character (because the comma is used into the differents labels and descriptions) so to see the informations on Excel, it's necessary to convert the datas and separate them by the '%' character.<br>
 During the processing, the script print on the screen the name of the categorie it's working on.
 
