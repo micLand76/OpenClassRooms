@@ -130,8 +130,9 @@ def recup_book_info(contenu):
 	#often commas into the product description
 	csv_file.write(product_url + '%' + book[0] + '%' + title + '%' + book[3] +\
 					'%' + book[2] + '%' + nb_available + '%' +\
-					product_description + '%' + CATEGORY_NAME + '%' + book[6] +\
-					'%' + image_url + '%' + CATEGORY_NAME + '\\' + image_name + ".jpg" + '\n')
+					CATEGORY_NAME + '%' + book[6] +\
+					'%' + image_url + '%' + CATEGORY_NAME + '\\' + image_name + ".jpg" +\
+					'%' + product_description + '\n')
 
 	#after we had create the csv file, we download each book's image
 	urllib.request.urlretrieve(image_url, CATEGORY_NAME + "/" + image_name + ".jpg")
@@ -165,9 +166,9 @@ for cat_url in categorie:
 		csv_file.write("product_page_url" + '%' + "universal_ product_code (upc)"\
 						+ '%' + "title" + '%'	+ "price_including_tax" + '%'\
 						+ "price_excluding_tax" + '%' + "number_available" + '%'\
-						+ "product_description" + '%' + "category" + '%'\
+						+ "category" + '%'\
 						+ "review_rating" + '%' + "image_url" + '%'\
-						+ "image_file_name" + '\n')
+						+ "image_file_name" + '%' + "product_description" + '\n')
 
 		#we recupere all the books' url into product_page_url_list
 		product_page_url_list = recup_books_url(cat_url)
