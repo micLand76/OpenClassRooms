@@ -14,7 +14,7 @@ download the files contact_site.py and requirements.tx there : https://github.co
 * From the command line (like Git Bash): <br>
   ```
   python -m venv env
-  source env/scripts/activate
+  source env/scripts/activate (Windows) or source env/bin/activate (Linux, iOS)
   pip install -r requirements.txt
   python contact_site.py
   ```
