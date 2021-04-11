@@ -8,13 +8,14 @@ Projects for my OpenClassRooms formation
 
 ## Installation
 
+* First, download Python on your PC: https://www.python.org/downloads/ and choose the installation for your OS
 * Download Files:<br>
 download the files contact_site.py and requirements.tx there : https://github.com/micLand76/OpenClassRooms.git
 * From the command line (like Git Bash): <br>
   ```
   python -m venv env
-  pip install -r requirements.txt
   source env/scripts/activate
+  pip install -r requirements.txt
   python contact_site.py
   ```
 
