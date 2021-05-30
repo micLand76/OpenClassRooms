@@ -1,4 +1,4 @@
-# OpenClassRooms
+# OpenClassRooms Project 2
 Projects for my OpenClassRooms formation
 
 ## About / Synopsis
